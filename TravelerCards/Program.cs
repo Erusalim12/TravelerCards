@@ -10,14 +10,24 @@ namespace TravelerCards
     {
         static void Main(string[] args)
         {
-            var sortedListOfCards = Sorting(new List<Card>
-            {               
+            var cardList = new List<Card>
+            {
                Card.Create("Адлер", "Чита"),
                Card.Create("Москва", "Анапа"),
                Card.Create("Чита", "Самара"),
                Card.Create("Анапа", "Адлер"),
                Card.Create("Самара", "Владивосток")
-            });
+            };        
+
+            Console.WriteLine("Оригинальная последовательность");
+            foreach (var item in cardList)
+            {
+                Console.WriteLine(item.ToString());
+            }
+
+            var sortedListOfCards = Sorting(cardList);
+
+            Console.WriteLine("\n Отсортированная последовательность");
             foreach (var card in sortedListOfCards)
             {
                 Console.WriteLine(card.ToString());

@@ -30,9 +30,8 @@ namespace TravelerCards
         }
         public override string ToString()
         {
-            return $"Departure city: {OutCity} \t Destination city:{InCity}";
+            return $"Departure: {OutCity} \t Destination: {InCity}";
         }
-
 
     }
 }
