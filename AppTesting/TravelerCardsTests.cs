@@ -11,56 +11,50 @@ namespace AppTesting
     [TestFixture]
     public class TravelerCardsTests
     {
+
         List<Card> NormalCards;
         List<Card> ErrorCards;
 
+
         [SetUp]
-        public void Prepare()
+        public void SetUp()
         {
+            //набор карт, из которых можно построить маршрут
             NormalCards = new List<Card>
             {
                Card.Create("Москва", "Анапа"),
                Card.Create("Адлер", "Чита"),
                Card.Create("Чита", "Самара"),
                Card.Create("Анапа", "Адлер"),
-               Card.Create("Самара", "Владивосток")          
+               Card.Create("Самара", "Владивосток")
             };
 
+            //набор карт с ошибкой
             ErrorCards = new List<Card>
             {
                Card.Create("Москва", "Анапа"),
                Card.Create("Адлер", "Чита"),
-            //   Card.Create("Чита", "Самара"),
                Card.Create("Анапа", "Адлер"),
                Card.Create("Самара", "Владивосток")
             };
         }
 
-        [Test]
-        public void GetFirstCard_IsTrue()
-        {
-            var firstCard = Program.GetFirstCard(NormalCards);
-            Assert.AreEqual(Card.Create("Москва", "Анапа").ToString(), firstCard.ToString());
-        }
 
-        //[Test]
-        //public void GetFirstCardError_IsTrue()
-        //{        
-        //    Assert.That(() => Program.GetFristCard(ErrorCards), Throws.ArgumentException);
-        //}
 
 
         [Test]
-
-        public void ListIsCorrectSorting_IsTrue()
+        public void Sorting_NormalList_Successful()
         {
-            var sortedCards = Program.SortingCards(NormalCards);
+            // Arrange
+            var sortedCards = Program.Sorting(NormalCards);
 
+            // Act
             if (sortedCards != null && sortedCards.Count > 0)
             {
                 var prevCard = sortedCards.FirstOrDefault();
                 sortedCards.Remove(prevCard);
 
+                // Assert
                 while (sortedCards.Count > 0)
                 {
                     Card nextCard = sortedCards.FirstOrDefault();
@@ -70,14 +64,22 @@ namespace AppTesting
                 }
             }
         }
+
         [Test]
-        public void SortingWithLoop_IsFalse()
-        {
-            NormalCards.Add(Card.Create("Адлер", "Владивосток"));
+        public void Sorting_ListWithError_ExceptionHandling()
+        {   
+            try
+            {
+                var sortedCards = Program.Sorting(ErrorCards);
+            }
+            catch (TravelellerCardSortingException e)
+            {
+                Assert.Pass(e.Message + e.InnerException);
+            }
+            Assert.Fail();
 
-            var actual = Program.SortingCards(NormalCards);
-
-            Assert.IsTrue(actual != null);
         }
+       
+
     }
 }

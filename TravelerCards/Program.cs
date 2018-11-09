@@ -6,59 +6,65 @@ using System.Threading.Tasks;
 
 namespace TravelerCards
 {
-   public class Program
+    public class Program
     {
         static void Main(string[] args)
         {
-
+            var sortedListOfCards = Sorting(new List<Card>
+            {               
+               Card.Create("Адлер", "Чита"),
+               Card.Create("Москва", "Анапа"),
+               Card.Create("Чита", "Самара"),
+               Card.Create("Анапа", "Адлер"),
+               Card.Create("Самара", "Владивосток")
+            });
+            foreach (var card in sortedListOfCards)
+            {
+                Console.WriteLine(card.ToString());
+            }
+            Console.Read();
         }
-        public static Card GetFirstCard(List<Card> cards)
+
+        public static string GetFirstCardKey(List<Card> cards)=>
+            cards.Select(x => x.OutCity).Except(cards.Select(c => c.InCity)).Single();
+
+        public static Dictionary<string, Card> ConvertToDictionary(IEnumerable<Card> cards) => 
+            cards.ToDictionary(c => c.OutCity, c => c);
+
+
+        public static List<Card> Sorting(List<Card> cards)
         {
             try
             {
                 var cardsDict = ConvertToDictionary(cards);
-            var firstCardKey = cards.Select(x => x.OutCity).Except(cards.Select(c => c.InCity)).Single();
-          return cardsDict[firstCardKey];
-            }
-            catch (InvalidOperationException)
-            {
-                throw new TravelellerCardSortingException("Ошибка, в наборе 2 или более карты, которые могут выступать как начало набора");
-            }
-        }
-
-        public static List<Card> SortingCards(List<Card> cards)
-        {
-            try
-            {
-                var cardsDict = ConvertToDictionary(cards);
-
-            var sortedList = new List<Card>(cards.Count());
-            
-                var firstCard = GetFirstCard(cards);
+                var sortedList = new List<Card>(cards.Count());
+                var firstCard = cardsDict[GetFirstCardKey(cards)];
                 cards.Remove(firstCard);
-                sortedList.Add(firstCard);         
+                sortedList.Add(firstCard);
 
-            while (cards.Count() > 0)
+                while (cards.Count() > 0)
                 {
                     sortedList.Add(cardsDict[sortedList.Last().InCity]);
                     cards.Remove(sortedList.Last());
                 }
 
-            return sortedList;
+                return sortedList;
             }
-            catch (ArgumentException) {
-                throw new TravelellerCardSortingException("Ошибка, в наборе 2 или более карты, которые могут выступать как начало набора");
+            catch (ArgumentException)
+            {
+                throw new TravelellerCardSortingException("Ошибка, в наборе 2 или более карты не имеющие предшественников");
+            }
+            catch (InvalidOperationException)
+            {
+                throw new TravelellerCardSortingException("Ошибка, в наборе 2 или более карты не имеющие предшественников");
             }
         }
 
-        public static Dictionary<string, Card> ConvertToDictionary(IEnumerable<Card> cards) => cards.ToDictionary(c => c.OutCity, c => c);
-   
-                 
-
+        
     }
-    public class TravelellerCardSortingException: Exception
+    public class TravelellerCardSortingException : Exception
     {
         public TravelellerCardSortingException(string message)
-            : base(message){}
+            : base(message) { }
     }
 }
