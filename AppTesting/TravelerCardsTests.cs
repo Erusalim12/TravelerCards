@@ -11,37 +11,73 @@ namespace AppTesting
     [TestFixture]
     public class TravelerCardsTests
     {
-        List<Card> Cards;
+        List<Card> NormalCards;
+        List<Card> ErrorCards;
 
         [SetUp]
-        private void SetUp()
+        public void Prepare()
         {
-            Cards = new List<Card>
+            NormalCards = new List<Card>
             {
                Card.Create("Москва", "Анапа"),
                Card.Create("Адлер", "Чита"),
                Card.Create("Чита", "Самара"),
                Card.Create("Анапа", "Адлер"),
+               Card.Create("Самара", "Владивосток")          
+            };
+
+            ErrorCards = new List<Card>
+            {
+               Card.Create("Москва", "Анапа"),
+               Card.Create("Адлер", "Чита"),
+            //   Card.Create("Чита", "Самара"),
+               Card.Create("Анапа", "Адлер"),
                Card.Create("Самара", "Владивосток")
             };
         }
 
-
-        [TestCase("Москва", "Стамбул")]
-        [TestCase("Ярославль", "Анапа")]
         [Test]
-        public void CanCreateCard_isCreated(string outCity, string inCity)
+        public void GetFirstCard_IsTrue()
         {
-            var card = Card.Create(outCity, inCity);
-            Assert.IsNotNull(card, "object not created");
+            var firstCard = Program.GetFirstCard(NormalCards);
+            Assert.AreEqual(Card.Create("Москва", "Анапа").ToString(), firstCard.ToString());
         }
 
+        //[Test]
+        //public void GetFirstCardError_IsTrue()
+        //{        
+        //    Assert.That(() => Program.GetFristCard(ErrorCards), Throws.ArgumentException);
+        //}
+
 
         [Test]
-        public void CanSortCard_IsTrue()
-        {
-         Cards.
 
+        public void ListIsCorrectSorting_IsTrue()
+        {
+            var sortedCards = Program.SortingCards(NormalCards);
+
+            if (sortedCards != null && sortedCards.Count > 0)
+            {
+                var prevCard = sortedCards.FirstOrDefault();
+                sortedCards.Remove(prevCard);
+
+                while (sortedCards.Count > 0)
+                {
+                    Card nextCard = sortedCards.FirstOrDefault();
+                    Assert.AreEqual(prevCard.InCity, nextCard.OutCity);
+                    prevCard = nextCard;
+                    sortedCards.Remove(prevCard);
+                }
+            }
+        }
+        [Test]
+        public void SortingWithLoop_IsFalse()
+        {
+            NormalCards.Add(Card.Create("Адлер", "Владивосток"));
+
+            var actual = Program.SortingCards(NormalCards);
+
+            Assert.IsTrue(actual != null);
         }
     }
 }

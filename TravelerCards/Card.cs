@@ -9,27 +9,29 @@ namespace TravelerCards
 {
     public class Card
     {
-        private readonly string _outCity;
-        private readonly string _inCity;
-
         private Card(string outCity, string inCity)
         {
-            _outCity = outCity;
-            _inCity = inCity;
+            OutCity = outCity;
+            InCity = inCity;
         }
+        /// <summary>
+        /// Город отправления
+        /// </summary>
+        public string OutCity { get; private set; }
 
-        public string CurrentCity { get => _outCity;}
-        public string NextCity { get => _inCity;}
+        /// <summary>
+        /// Город прибытия
+        /// </summary>
+        public string InCity {  get; private set; }
 
-        
         public static Card Create(string outCity, string inCity)
         {
             return new Card(outCity, inCity);
         }
-        public override string ToString()
-        {
-            return $"Departure city: {_outCity} \t Destination city:{_inCity}";
-        }
+        //public override string ToString()
+        //{
+        //    return $"Departure city: {_outCity} \t Destination city:{_inCity}";
+        //}
 
 
     }
